@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using Windows.Data.Xml.Dom;
 using Windows.Foundation;
 using Windows.UI.Notifications;
@@ -8,7 +9,24 @@ namespace CB.Windows.UI
 {
     public class Toast
     {
+        #region Fields
+        private readonly string _applicationId;
+        private ToastNotification _toast;
+        #endregion
+
+
+        #region  Constructors & Destructor
+        public Toast(string applicationId)
+        {
+            _applicationId = applicationId;
+        }
+
+        public Toast(): this(CreateUniqueId()) { }
+        #endregion
+
+
         #region  Properties & Indexers
+        public ToastAudio Audio { get; set; }
         public DateTimeOffset? ExpirationTime { get; set; }
         public string ImageSource { get; set; } = "";
         public string[] Lines { get; set; }
@@ -23,6 +41,14 @@ namespace CB.Windows.UI
 
 
         #region Methods
+        public void Hide()
+        {
+            if (_toast == null) return;
+
+            ToastNotificationManager.CreateToastNotifier(_applicationId).Hide(_toast);
+            _toast = null;
+        }
+
         public void Show()
         {
             Show(CreateToastContent());
@@ -31,6 +57,12 @@ namespace CB.Windows.UI
         public void Show(string xmlContent)
         {
             Show(CreateToastContent(xmlContent));
+        }
+
+        public void Show(XmlDocument content)
+        {
+            _toast = CreateToast(content);
+            ToastNotificationManager.CreateToastNotifier(_applicationId).Show(_toast);
         }
         #endregion
 
@@ -54,8 +86,14 @@ namespace CB.Windows.UI
 
 
         #region Implementation
+        private static string CreateUniqueId()
+        {
+            return new Guid().ToString();
+        }
+
         private ToastNotification CreateToast(XmlDocument content)
         {
+            Debug.WriteLine(content.GetXml());
             var toast = new ToastNotification(content);
             if (ExpirationTime.HasValue)
             {
@@ -89,6 +127,8 @@ namespace CB.Windows.UI
                 var imgElement = toastXml.GetElementsByTagName("image")[0] as XmlElement;
                 imgElement?.SetAttribute("src", ImageSource);
             }
+
+            Audio?.AddToToastContent(toastXml);
             return toastXml;
         }
 
@@ -126,13 +166,6 @@ namespace CB.Windows.UI
         {
             return !string.IsNullOrWhiteSpace(Lines[0]) &&
                    (string.IsNullOrWhiteSpace(Lines[1]) || Lines[0].Length > Lines[1].Length);
-        }
-
-        private void Show(XmlDocument content)
-        {
-            var toast = CreateToast(content);
-            var toastNotifier = ToastNotificationManager.CreateToastNotifier("Toast");
-            toastNotifier.Show(toast);
         }
         #endregion
     }
