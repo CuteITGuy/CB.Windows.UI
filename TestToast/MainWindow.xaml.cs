@@ -30,12 +30,13 @@ namespace TestToast
 
         private void CmdShowToast_OnClick(object sender, RoutedEventArgs e)
         {
-            var toastAudio = ToastAudio.Call4;
-            toastAudio.Loop = true;
-
             _toast = new Toast
             {
-                Audio = toastAudio,
+                Audio = new ToastAudio
+                {
+                    AudioType = ToastAudioType.Alarm6,
+                    Loop = true
+                },
                 ExpirationTime = new DateTimeOffset(DateTime.Now.Add(TimeSpan.FromMinutes(1))),
                 ImageSource = _imageSource,
                 Lines = new[] { "Test _toast" }
