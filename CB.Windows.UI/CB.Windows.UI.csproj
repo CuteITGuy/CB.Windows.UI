@@ -44,9 +44,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SourceType.cs" />
     <Compile Include="Toast.cs" />
     <Compile Include="ToastAudio.cs" />
     <Compile Include="ToastAudioType.cs" />
+    <Compile Include="ToastCommand.cs" />
+    <Compile Include="ToastCommandId.cs" />
+    <Compile Include="ToastElement.cs" />
+    <Compile Include="ToastImage.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

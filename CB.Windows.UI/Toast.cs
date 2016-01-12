@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using Windows.Data.Xml.Dom;
 using Windows.Foundation;
@@ -27,8 +28,10 @@ namespace CB.Windows.UI
 
         #region  Properties & Indexers
         public ToastAudio Audio { get; set; }
+        public IEnumerable<ToastCommand> Commands { get; set; }
         public DateTimeOffset? ExpirationTime { get; set; }
-        public string ImageSource { get; set; } = "";
+        public ToastImage Image { get; set; }
+        public string Launch { get; set; }
         public string[] Lines { get; set; }
         #endregion
 
@@ -86,11 +89,6 @@ namespace CB.Windows.UI
 
 
         #region Implementation
-        private static string CreateUniqueId()
-        {
-            return new Guid().ToString();
-        }
-
         private ToastNotification CreateToast(XmlDocument content)
         {
             Debug.WriteLine(content.GetXml());
@@ -122,19 +120,37 @@ namespace CB.Windows.UI
                 txtElements[i].AppendChild(toastXml.CreateTextNode(Lines[i]));
             }
 
-            if (!string.IsNullOrWhiteSpace(ImageSource))
+            if (Image != null)
             {
                 var imgElement = toastXml.GetElementsByTagName("image")[0] as XmlElement;
-                imgElement?.SetAttribute("src", ImageSource);
+                Image.SetImageAttribute(imgElement);
             }
 
             Audio?.AddToToastContent(toastXml);
+
+            if (Commands != null)
+            {
+                foreach (var command in Commands)
+                {
+                    command?.AddToToastContent(toastXml);
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(Launch))
+            {
+                toastXml.DocumentElement.SetAttribute("launch", Launch);
+            }
             return toastXml;
+        }
+
+        private static string CreateUniqueId()
+        {
+            return new Guid().ToString();
         }
 
         private ToastTemplateType GetToastTemplateType()
         {
-            if (string.IsNullOrWhiteSpace(ImageSource))
+            if (Image == null)
             {
                 switch (Lines.Length)
                 {
@@ -170,3 +186,7 @@ namespace CB.Windows.UI
         #endregion
     }
 }
+
+
+//TODO: Add ToastCommand
+//TODO: Complete TestToast

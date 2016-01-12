@@ -3,7 +3,7 @@ using Windows.Data.Xml.Dom;
 
 namespace CB.Windows.UI
 {
-    public class ToastAudio
+    public class ToastAudio: ToastElement
     {
         #region Fields
         private const string TOAST_AUDIO_NAMESPACE = "ms-winsoundevent:Notification";
@@ -19,15 +19,12 @@ namespace CB.Windows.UI
         #endregion
 
 
-        #region Methods
-        public void AddToToastContent(XmlDocument toastContent)
+        #region Override
+        public override void AddToToastContent(XmlDocument toastContent)
         {
-            var audioElement = toastContent.SelectSingleNode("audio") as XmlElement;
-            if (audioElement == null)
-            {
-                audioElement = toastContent.CreateElement("audio");
-                toastContent.DocumentElement.AppendChild(audioElement);
-            }
+            if (AudioType == ToastAudioType.None) return;
+
+            var audioElement = GetParentElement(toastContent, "audio");
             audioElement.SetAttribute("src", ToString());
             if (Loop)
             {
@@ -39,15 +36,15 @@ namespace CB.Windows.UI
                 audioElement.SetAttribute("silent", "true");
             }
         }
-        #endregion
 
-
-        #region Override
         public override string ToString()
         {
             var audioName = AudioType.ToString();
-            return audioName.StartsWith("Call") || audioName.StartsWith("Alarm")
-                       ? $"{TOAST_AUDIO_NAMESPACE}.Looping.{audioName}" : $"{TOAST_AUDIO_NAMESPACE}.{audioName}";
+            return AudioType == ToastAudioType.None
+                       ? audioName
+                       : (audioName.StartsWith("Call") || audioName.StartsWith("Alarm")
+                              ? $"{TOAST_AUDIO_NAMESPACE}.Looping.{audioName}"
+                              : $"{TOAST_AUDIO_NAMESPACE}.{audioName}");
         }
         #endregion
     }

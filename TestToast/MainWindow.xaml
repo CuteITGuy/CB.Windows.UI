@@ -3,11 +3,38 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:TestToast"
+        xmlns:ui="clr-namespace:CB.Windows.UI;assembly=CB.Windows.UI"
+        xmlns:xaml="http://wpf.cb.com/xaml"
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
-    <StackPanel Orientation="Vertical">
-        <Button x:Name="cmdShowToast" Content="Show Toast" Click="CmdShowToast_OnClick" />
-        <Button x:Name="cmdHideToast" Content="Hide Toast" Click="CmdHideToast_OnClick" />
-    </StackPanel>
+
+    <Window.Resources>
+        <ui:Toast x:Key="Toast" />
+    </Window.Resources>
+
+    <Grid x:Name="ctnToast" DataContext="{StaticResource Toast}">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
+        <!--Input Audio-->
+        <TextBlock Text="Audio" Grid.Row="0" Grid.Column="0" />
+        <ComboBox x:Name="lstAudio" Grid.Row="0" Grid.Column="1"
+                  ItemsSource="{xaml:EnumValues ui:ToastAudioType}"
+                  SelectedItem="{Binding Audio}" />
+
+        <Button x:Name="cmdShowToast" Grid.Row="2" Grid.Column="0"
+                Content="Show Toast" Click="CmdShowToast_OnClick" />
+        <Button x:Name="cmdHideToast" Grid.Row="2" Grid.Column="1"
+                Content="Hide Toast" Click="CmdHideToast_OnClick" />
+    </Grid>
 </Window>

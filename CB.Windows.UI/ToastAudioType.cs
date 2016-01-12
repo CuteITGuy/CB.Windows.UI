@@ -2,6 +2,7 @@
 {
     public enum ToastAudioType
     {
+        None,
         Alarm,
         Alarm2,
         Alarm3,

@@ -34,6 +34,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CB.Xaml.MarkupExtensions">
+      <HintPath>..\..\Xaml\CB.Xaml.MarkupExtensions\bin\Release\CB.Xaml.MarkupExtensions.dll</HintPath>
+    </Reference>
+    <Reference Include="CB.Xaml.ValueConverters">
+      <HintPath>..\..\Xaml\CB.Xaml.ValueConverters\bin\Release\CB.Xaml.ValueConverters.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
